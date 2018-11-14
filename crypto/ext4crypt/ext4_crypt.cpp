@@ -196,8 +196,13 @@ extern "C" bool e4crypt_set_mode() {
     close(fd);
     if (!strcmp(contents_encryption_mode, "software")) {
         encryption_mode = EXT4_ENCRYPTION_MODE_AES_256_XTS;
-    } else if (!strcmp(contents_encryption_mode, "ice")) {
-        encryption_mode = EXT4_ENCRYPTION_MODE_PRIVATE;
+    } else if (!strncmp(contents_encryption_mode, "ice", 3)) {
+	if (strlen(contents_encryption_mode) == 3 || contents_encryption_mode[3] == ':') {
+            encryption_mode = EXT4_ENCRYPTION_MODE_PRIVATE;
+	} else {
+	    printf("Invalid encryption mode '%s'\n", contents_encryption_mode);
+	    return false;
+	}
     } else {
         printf("Invalid encryption mode '%s'\n", contents_encryption_mode);
         return false;
